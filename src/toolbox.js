@@ -11,18 +11,25 @@ const lengthScales = ['feet', 'meters', 'kilometers', 'centimeters', 'inches', '
 let toKilograms = new Map();
 toKilograms.set('pounds', 2.20462);
 toKilograms.set('kilograms', 1);
+toKilograms.set('grams', 1000);
 toKilograms.set('ounces', 2.20462*16);
 toKilograms.set('stone', 2.20462/14);
-const massScales = ['pounds', 'kilograms', 'ounces', 'stone'];
+toKilograms.set('US tons', 2.20462/2000)
+const massScales = ['pounds', 'kilograms', 'grams', 'ounces', 'stone', 'US tons'];
 
 let toLiters = new Map();
 toLiters.set('liters', 1);
 toLiters.set('milliliters', 1000);
-toLiters.set('US gallons', 3.78541);
-toLiters.set('US quarts', 3.78541*4);
-toLiters.set('US pints', 3.78541*8);
+toLiters.set('US gallons', 0.264172);
+toLiters.set('US quarts', 0.264172*4);
+toLiters.set('US pints', 0.264172*8);
+toLiters.set('US cups', 4.16667)
+toLiters.set('US fluid oz', 0.264172*128);
+toLiters.set('US tablespoons', 0.264172*256);
+toLiters.set('US teaspoons', 0.264172*256*3);
 toLiters.set('cubic meters', 0.001);
-const volumeScales = ['liters', 'milliliters', 'US gallons', 'US quarts', 'US pints', 'cubic meters'];
+const volumeScales = ['liters', 'milliliters', 'US gallons', 'US quarts', 'US pints', 'US cups', 
+'US fluid oz', 'US tablespoons', 'US teaspoons', 'cubic meters'];
 
 let scaleMap = new Map();
 scaleMap.set('length', lengthScales);
@@ -68,8 +75,10 @@ class UnitForm extends React.Component {
           <select value={scale} onChange={this.handleChange}>
             <option value="pounds">pounds</option>
             <option value="kilograms">kilograms</option>
+            <option value="grams">grams</option>
             <option value="ounces">ounces</option>
             <option value="stone">stone</option>
+            <option value="US tons">US tons</option>
           </select>
         </label>
       </form>   
@@ -85,6 +94,10 @@ class UnitForm extends React.Component {
             <option value="US gallons">US gallons</option>
             <option value="US quarts">US quarts</option>
             <option value="US pints">US pints</option>
+            <option value="US cups">US cups</option>
+            <option value="US fluid oz">US fluid oz</option>
+            <option value="US tablespoons">US tablespoons</option>
+            <option value="US teaspoons">US teaspoons</option>
             <option value="cubic meters">cubic meters</option>
           </select>
         </label>

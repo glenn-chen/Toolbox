@@ -19,18 +19,24 @@ var lengthScales = ['feet', 'meters', 'kilometers', 'centimeters', 'inches', 'ya
 var toKilograms = new Map();
 toKilograms.set('pounds', 2.20462);
 toKilograms.set('kilograms', 1);
+toKilograms.set('grams', 1000);
 toKilograms.set('ounces', 2.20462 * 16);
 toKilograms.set('stone', 2.20462 / 14);
-var massScales = ['pounds', 'kilograms', 'ounces', 'stone'];
+toKilograms.set('US tons', 2.20462 / 2000);
+var massScales = ['pounds', 'kilograms', 'grams', 'ounces', 'stone', 'US tons'];
 
 var toLiters = new Map();
 toLiters.set('liters', 1);
 toLiters.set('milliliters', 1000);
-toLiters.set('US gallons', 3.78541);
-toLiters.set('US quarts', 3.78541 * 4);
-toLiters.set('US pints', 3.78541 * 8);
+toLiters.set('US gallons', 0.264172);
+toLiters.set('US quarts', 0.264172 * 4);
+toLiters.set('US pints', 0.264172 * 8);
+toLiters.set('US cups', 4.16667);
+toLiters.set('US fluid oz', 0.264172 * 128);
+toLiters.set('US tablespoons', 0.264172 * 256);
+toLiters.set('US teaspoons', 0.264172 * 256 * 3);
 toLiters.set('cubic meters', 0.001);
-var volumeScales = ['liters', 'milliliters', 'US gallons', 'US quarts', 'US pints', 'cubic meters'];
+var volumeScales = ['liters', 'milliliters', 'US gallons', 'US quarts', 'US pints', 'US cups', 'US fluid oz', 'US tablespoons', 'US teaspoons', 'cubic meters'];
 
 var scaleMap = new Map();
 scaleMap.set('length', lengthScales);
@@ -129,6 +135,11 @@ var UnitForm = function (_React$Component) {
             ),
             React.createElement(
               'option',
+              { value: 'grams' },
+              'grams'
+            ),
+            React.createElement(
+              'option',
               { value: 'ounces' },
               'ounces'
             ),
@@ -136,6 +147,11 @@ var UnitForm = function (_React$Component) {
               'option',
               { value: 'stone' },
               'stone'
+            ),
+            React.createElement(
+              'option',
+              { value: 'US tons' },
+              'US tons'
             )
           )
         )
@@ -173,6 +189,26 @@ var UnitForm = function (_React$Component) {
               'option',
               { value: 'US pints' },
               'US pints'
+            ),
+            React.createElement(
+              'option',
+              { value: 'US cups' },
+              'US cups'
+            ),
+            React.createElement(
+              'option',
+              { value: 'US fluid oz' },
+              'US fluid oz'
+            ),
+            React.createElement(
+              'option',
+              { value: 'US tablespoons' },
+              'US tablespoons'
+            ),
+            React.createElement(
+              'option',
+              { value: 'US teaspoons' },
+              'US teaspoons'
             ),
             React.createElement(
               'option',
