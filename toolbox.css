@@ -4,13 +4,13 @@ html {
   background-color: #D3AC8B;
 }
 
-body {
+/*body {
   width: 500px;
   margin: 50px auto;
   background-color: white;
   padding: 0 20px 20px 20px;
   border: 2px solid black;
-}
+} */
 
 h1 {
   font-size: 30px;
@@ -44,4 +44,12 @@ select {
 .dimensionForm {
   padding: 0 0 5px 0;
 /*  font-size: 18px; */
+}
+
+.container {
+  width: 500px;
+  margin: 50px auto;
+  background-color: white;
+  padding: 0 20px 20px 20px;
+  border: 2px solid black;
 }
