@@ -14,8 +14,9 @@ toKilograms.set('kilograms', 1);
 toKilograms.set('grams', 1000);
 toKilograms.set('ounces', 2.20462*16);
 toKilograms.set('stone', 2.20462/14);
-toKilograms.set('US tons', 2.20462/2000)
-const massScales = ['pounds', 'kilograms', 'grams', 'ounces', 'stone', 'US tons'];
+toKilograms.set('US tons', 2.20462/2000);
+toKilograms.set('metric tons', 0.001);
+const massScales = ['pounds', 'kilograms', 'grams', 'ounces', 'stone', 'US tons', 'metric tons'];
 
 let toLiters = new Map();
 toLiters.set('liters', 1);
@@ -30,6 +31,8 @@ toLiters.set('US teaspoons', 0.264172*256*3);
 toLiters.set('cubic meters', 0.001);
 const volumeScales = ['liters', 'milliliters', 'US gallons', 'US quarts', 'US pints', 'US cups', 
 'US fluid oz', 'US tablespoons', 'US teaspoons', 'cubic meters'];
+
+const temperatureScales = ['fahrenheit', 'celsius', 'kelvin'];
 
 let scaleMap = new Map();
 scaleMap.set('length', lengthScales);
@@ -79,6 +82,7 @@ class UnitForm extends React.Component {
             <option value="ounces">ounces</option>
             <option value="stone">stone</option>
             <option value="US tons">US tons</option>
+            <option value="metric tons">metric tons</option>
           </select>
         </label>
       </form>   
@@ -102,6 +106,19 @@ class UnitForm extends React.Component {
           </select>
         </label>
       </form>   
+      );
+    else if (dim == 'temperature')
+      return (
+      <form>
+        <label>
+          Enter value in
+          <select value={scale} onChange={this.handleChange}>
+            <option value="fahrenheit">fahrenheit</option>
+            <option value="celsius">celsius</option>
+            <option value="kelvin">kelvin</option>
+          </select>
+        </label>
+      </form>
       );
     else
       return (<h2>invalid dimension</h2>);
@@ -127,6 +144,7 @@ class DimensionForm extends React.Component {
           <option value="length">length</option>
           <option value="mass">mass</option>
           <option value="volume">volume</option>
+          <option value="temperature">temperature</option>
         </select>
       </label>
     </form> 
@@ -176,9 +194,17 @@ class Converter extends React.Component {
     else alert('An error has occurred.');
   }
   handleDimensionFormChange(dim) {
-    const dimUnit1 = scaleMap.get(dim)[0];
-    const dimUnit2 = scaleMap.get(dim)[1];
-    this.setState({quantity: '1', dimension: dim, scale: dimUnit1, from: dimUnit1, to: dimUnit2});
+    if (dim === 'temperature') {
+      // temperature does not use scaleMap 
+      const dimUnit1 = temperatureScales[0];
+      const dimUnit2 = temperatureScales[1];
+      this.setState({quantity: '32', dimension: dim, scale: dimUnit1, from: dimUnit1, to: dimUnit2});
+    }
+    else {
+      const dimUnit1 = scaleMap.get(dim)[0];
+      const dimUnit2 = scaleMap.get(dim)[1];
+      this.setState({quantity: '1', dimension: dim, scale: dimUnit1, from: dimUnit1, to: dimUnit2});
+    }
   }
   
   tryConvert(quantity, scaleFrom, scaleTo) {
@@ -198,8 +224,34 @@ class Converter extends React.Component {
       return (quantity / toKilograms.get(scaleFrom) * toKilograms.get(scaleTo));
     else if (this.state.dimension === 'volume')
       return (quantity / toLiters.get(scaleFrom) * toLiters.get(scaleTo));
+    else if (this.state.dimension === 'temperature')
+      return this.convertTemperature(quantity, scaleFrom, scaleTo);
     else
-      return 'A problem occurred.';
+      return 'Invalid dimension';
+  }
+
+  convertTemperature(temp, scaleFrom, scaleTo) {
+    if (scaleFrom === scaleTo)
+      return temp;
+    
+    if (scaleFrom === 'fahrenheit') {
+      if (scaleTo === 'celsius')
+        return (temp - 32) * 5 / 9;
+      else if (scaleTo === 'kelvin')
+        return (temp - 32) * 5 / 9 + 273.15;
+    }
+    else if (scaleFrom === 'celsius') {
+      if (scaleTo === 'fahrenheit')
+        return (temp * 9 / 5) + 32;
+      else if (scaleTo === 'kelvin')
+        return temp + 273.15;
+    }
+    else if (scaleFrom === 'kelvin') {
+      if (scaleTo === 'fahrenheit')
+      return (temp - 273.15) * 9 / 5 + 32;
+    else if (scaleTo === 'celsius')
+      return temp - 273.15;
+    }
   }
   
   render() {

@@ -23,7 +23,8 @@ toKilograms.set('grams', 1000);
 toKilograms.set('ounces', 2.20462 * 16);
 toKilograms.set('stone', 2.20462 / 14);
 toKilograms.set('US tons', 2.20462 / 2000);
-var massScales = ['pounds', 'kilograms', 'grams', 'ounces', 'stone', 'US tons'];
+toKilograms.set('metric tons', 0.001);
+var massScales = ['pounds', 'kilograms', 'grams', 'ounces', 'stone', 'US tons', 'metric tons'];
 
 var toLiters = new Map();
 toLiters.set('liters', 1);
@@ -37,6 +38,8 @@ toLiters.set('US tablespoons', 0.264172 * 256);
 toLiters.set('US teaspoons', 0.264172 * 256 * 3);
 toLiters.set('cubic meters', 0.001);
 var volumeScales = ['liters', 'milliliters', 'US gallons', 'US quarts', 'US pints', 'US cups', 'US fluid oz', 'US tablespoons', 'US teaspoons', 'cubic meters'];
+
+var temperatureScales = ['fahrenheit', 'celsius', 'kelvin'];
 
 var scaleMap = new Map();
 scaleMap.set('length', lengthScales);
@@ -152,6 +155,11 @@ var UnitForm = function (_React$Component) {
               'option',
               { value: 'US tons' },
               'US tons'
+            ),
+            React.createElement(
+              'option',
+              { value: 'metric tons' },
+              'metric tons'
             )
           )
         )
@@ -217,6 +225,33 @@ var UnitForm = function (_React$Component) {
             )
           )
         )
+      );else if (dim == 'temperature') return React.createElement(
+        'form',
+        null,
+        React.createElement(
+          'label',
+          null,
+          'Enter value in',
+          React.createElement(
+            'select',
+            { value: scale, onChange: this.handleChange },
+            React.createElement(
+              'option',
+              { value: 'fahrenheit' },
+              'fahrenheit'
+            ),
+            React.createElement(
+              'option',
+              { value: 'celsius' },
+              'celsius'
+            ),
+            React.createElement(
+              'option',
+              { value: 'kelvin' },
+              'kelvin'
+            )
+          )
+        )
       );else return React.createElement(
         'h2',
         null,
@@ -272,6 +307,11 @@ var DimensionForm = function (_React$Component2) {
               'option',
               { value: 'volume' },
               'volume'
+            ),
+            React.createElement(
+              'option',
+              { value: 'temperature' },
+              'temperature'
             )
           )
         )
@@ -344,9 +384,16 @@ var Converter = function (_React$Component4) {
   }, {
     key: 'handleDimensionFormChange',
     value: function handleDimensionFormChange(dim) {
-      var dimUnit1 = scaleMap.get(dim)[0];
-      var dimUnit2 = scaleMap.get(dim)[1];
-      this.setState({ quantity: '1', dimension: dim, scale: dimUnit1, from: dimUnit1, to: dimUnit2 });
+      if (dim === 'temperature') {
+        // temperature does not use scaleMap 
+        var dimUnit1 = temperatureScales[0];
+        var dimUnit2 = temperatureScales[1];
+        this.setState({ quantity: '32', dimension: dim, scale: dimUnit1, from: dimUnit1, to: dimUnit2 });
+      } else {
+        var _dimUnit = scaleMap.get(dim)[0];
+        var _dimUnit2 = scaleMap.get(dim)[1];
+        this.setState({ quantity: '1', dimension: dim, scale: _dimUnit, from: _dimUnit, to: _dimUnit2 });
+      }
     }
   }, {
     key: 'tryConvert',
@@ -362,7 +409,20 @@ var Converter = function (_React$Component4) {
   }, {
     key: 'convertQuantity',
     value: function convertQuantity(quantity, scaleFrom, scaleTo) {
-      if (this.state.dimension === 'length') return quantity / toMeters.get(scaleFrom) * toMeters.get(scaleTo);else if (this.state.dimension === 'mass') return quantity / toKilograms.get(scaleFrom) * toKilograms.get(scaleTo);else if (this.state.dimension === 'volume') return quantity / toLiters.get(scaleFrom) * toLiters.get(scaleTo);else return 'A problem occurred.';
+      if (this.state.dimension === 'length') return quantity / toMeters.get(scaleFrom) * toMeters.get(scaleTo);else if (this.state.dimension === 'mass') return quantity / toKilograms.get(scaleFrom) * toKilograms.get(scaleTo);else if (this.state.dimension === 'volume') return quantity / toLiters.get(scaleFrom) * toLiters.get(scaleTo);else if (this.state.dimension === 'temperature') return this.convertTemperature(quantity, scaleFrom, scaleTo);else return 'Invalid dimension';
+    }
+  }, {
+    key: 'convertTemperature',
+    value: function convertTemperature(temp, scaleFrom, scaleTo) {
+      if (scaleFrom === scaleTo) return temp;
+
+      if (scaleFrom === 'fahrenheit') {
+        if (scaleTo === 'celsius') return (temp - 32) * 5 / 9;else if (scaleTo === 'kelvin') return (temp - 32) * 5 / 9 + 273.15;
+      } else if (scaleFrom === 'celsius') {
+        if (scaleTo === 'fahrenheit') return temp * 9 / 5 + 32;else if (scaleTo === 'kelvin') return temp + 273.15;
+      } else if (scaleFrom === 'kelvin') {
+        if (scaleTo === 'fahrenheit') return (temp - 273.15) * 9 / 5 + 32;else if (scaleTo === 'celsius') return temp - 273.15;
+      }
     }
   }, {
     key: 'render',
