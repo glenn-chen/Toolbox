@@ -1,5 +1,8 @@
 # Toolbox
+Toolbox is a unit conversion form.
 
-This project can also be accessed at https://codepen.io/glennc_/pen/yLXOeOL
+This was my first React.js project I made to teach myself the concepts. 
 
-Interactive unit converter made using React, JSX, HTML, and CSS. The JSX code is written in the file "src/toolbox.js" and converted to JavaScript using the script "compilejsx.sh"
+To view locally:
+
+`npm run start`

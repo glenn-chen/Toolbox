@@ -1,3 +1,6 @@
+import React from 'react';
+import './Toolbox.css';
+
 let toMeters = new Map();
 toMeters.set('feet', 3.28084);
 toMeters.set('meters', 1);
@@ -297,8 +300,4 @@ class ToolBox extends React.Component {
   }
 }
 
-ReactDOM.render(
-  <ToolBox />,
-  document.getElementById('root')
-);
-
+export default ToolBox;
