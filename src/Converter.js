@@ -1,46 +1,6 @@
 import React from 'react';
 import './Toolbox.css';
-
-let toMeters = new Map();
-toMeters.set('feet', 3.28084);
-toMeters.set('meters', 1);
-toMeters.set('kilometers', 0.001);
-toMeters.set('centimeters', 100);
-toMeters.set('inches', 3.28084*12);
-toMeters.set('yards', 3.28084/3);
-toMeters.set('miles', 3.28084/5280);
-const lengthScales = ['feet', 'meters', 'kilometers', 'centimeters', 'inches', 'yards', 'miles'];
-
-let toKilograms = new Map();
-toKilograms.set('pounds', 2.20462);
-toKilograms.set('kilograms', 1);
-toKilograms.set('grams', 1000);
-toKilograms.set('ounces', 2.20462*16);
-toKilograms.set('stone', 2.20462/14);
-toKilograms.set('US tons', 2.20462/2000);
-toKilograms.set('metric tons', 0.001);
-const massScales = ['pounds', 'kilograms', 'grams', 'ounces', 'stone', 'US tons', 'metric tons'];
-
-let toLiters = new Map();
-toLiters.set('liters', 1);
-toLiters.set('milliliters', 1000);
-toLiters.set('US gallons', 0.264172);
-toLiters.set('US quarts', 0.264172*4);
-toLiters.set('US pints', 0.264172*8);
-toLiters.set('US cups', 4.16667)
-toLiters.set('US fluid oz', 0.264172*128);
-toLiters.set('US tablespoons', 0.264172*256);
-toLiters.set('US teaspoons', 0.264172*256*3);
-toLiters.set('cubic meters', 0.001);
-const volumeScales = ['liters', 'milliliters', 'US gallons', 'US quarts', 'US pints', 'US cups', 
-'US fluid oz', 'US tablespoons', 'US teaspoons', 'cubic meters'];
-
-const temperatureScales = ['fahrenheit', 'celsius', 'kelvin'];
-
-let scaleMap = new Map();
-scaleMap.set('length', lengthScales);
-scaleMap.set('mass', massScales);
-scaleMap.set('volume', volumeScales);
+import Constants from './Constants';
 
 class UnitForm extends React.Component {
   constructor(props) {
@@ -52,79 +12,28 @@ class UnitForm extends React.Component {
     const version = this.props.version;
     this.props.onInputChange(e.target.value, version);
   }
-  
+
   render() {
+    const scaleMap = Constants.SCALE_MAP;
+
     const scale = this.props.scale;
     const dim = this.props.dimension;
-    if (dim === 'length')
-      return (
+
+    const options = [];
+    for (let i = 0; i < scaleMap.get(dim).length; i++) {
+      options.push({value: scaleMap.get(dim)[i], text: scaleMap.get(dim)[i]});
+    }
+
+    return (
       <form>
         <label>
           Enter value in  
           <select value={scale} onChange={this.handleChange}>
-            <option value="feet">feet</option>
-            <option value="meters">meters</option>
-            <option value="kilometers">kilometers</option>
-            <option value="centimeters">centimeters</option>
-            <option value="inches">inches</option>
-            <option value="yards">yards</option>
-            <option value="miles">miles</option>
+            {options.map((item) => <option value={item.value}>{item.text}</option>)}
           </select>
         </label>
       </form>
-      );
-    else if (dim === 'mass') 
-      return (
-      <form>
-        <label>
-          Enter value in  
-          <select value={scale} onChange={this.handleChange}>
-            <option value="pounds">pounds</option>
-            <option value="kilograms">kilograms</option>
-            <option value="grams">grams</option>
-            <option value="ounces">ounces</option>
-            <option value="stone">stone</option>
-            <option value="US tons">US tons</option>
-            <option value="metric tons">metric tons</option>
-          </select>
-        </label>
-      </form>   
-      );
-    else if (dim === 'volume') 
-      return (
-      <form>
-        <label>
-          Enter value in  
-          <select value={scale} onChange={this.handleChange}>
-            <option value="liters">liters</option>
-            <option value="milliliters">milliters</option>
-            <option value="US gallons">US gallons</option>
-            <option value="US quarts">US quarts</option>
-            <option value="US pints">US pints</option>
-            <option value="US cups">US cups</option>
-            <option value="US fluid oz">US fluid oz</option>
-            <option value="US tablespoons">US tablespoons</option>
-            <option value="US teaspoons">US teaspoons</option>
-            <option value="cubic meters">cubic meters</option>
-          </select>
-        </label>
-      </form>   
-      );
-    else if (dim == 'temperature')
-      return (
-      <form>
-        <label>
-          Enter value in
-          <select value={scale} onChange={this.handleChange}>
-            <option value="fahrenheit">fahrenheit</option>
-            <option value="celsius">celsius</option>
-            <option value="kelvin">kelvin</option>
-          </select>
-        </label>
-      </form>
-      );
-    else
-      return (<h2>invalid dimension</h2>);
+    );
   }
 }
 
@@ -168,7 +77,7 @@ class TextInput extends React.Component {
   render() {
     const quant = this.props.quantity;
     const scale = this.props.scale;
- 
+  
     return (
       <fieldset>
         <input value={quant} onChange={this.handleChange} />
@@ -197,17 +106,11 @@ class Converter extends React.Component {
     else alert('An error has occurred.');
   }
   handleDimensionFormChange(dim) {
-    if (dim === 'temperature') {
-      // temperature does not use scaleMap 
-      const dimUnit1 = temperatureScales[0];
-      const dimUnit2 = temperatureScales[1];
-      this.setState({quantity: '32', dimension: dim, scale: dimUnit1, from: dimUnit1, to: dimUnit2});
-    }
-    else {
-      const dimUnit1 = scaleMap.get(dim)[0];
-      const dimUnit2 = scaleMap.get(dim)[1];
-      this.setState({quantity: '1', dimension: dim, scale: dimUnit1, from: dimUnit1, to: dimUnit2});
-    }
+    // const temperatureScales = Constants.TEMPERATURE_SCALES;
+    let initialQuantity = dim === 'temperature' ? 32 : 1;
+    const dimUnit1 = Constants.SCALE_MAP.get(dim)[0];
+    const dimUnit2 = Constants.SCALE_MAP.get(dim)[1];
+    this.setState({quantity: initialQuantity, dimension: dim, scale: dimUnit1, from: dimUnit1, to: dimUnit2});
   }
   
   tryConvert(quantity, scaleFrom, scaleTo) {
@@ -221,6 +124,10 @@ class Converter extends React.Component {
   }
   
   convertQuantity(quantity, scaleFrom, scaleTo) {
+    const toMeters = Constants.TO_METERS;
+    const toKilograms = Constants.TO_KILOGRAMS;
+    const toLiters = Constants.TO_LITERS;
+
     if (this.state.dimension === 'length')
       return (quantity / toMeters.get(scaleFrom) * toMeters.get(scaleTo));
     else if (this.state.dimension === 'mass')
@@ -289,15 +196,4 @@ class Converter extends React.Component {
   }
 }
 
-class ToolBox extends React.Component {
-  render() {
-    return (
-      <div>
-        <h1>Welcome to Toolbox</h1>
-        <Converter />
-      </div>
-    );
-  }
-}
-
-export default ToolBox;
+export default Converter;

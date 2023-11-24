@@ -1,16 +1,16 @@
 html {
     font-size: 14px; 
     font-family: "Open Sans", sans-serif; 
-    background-color: #D3AC8B;
+    /* background-color: #D3AC8B; */
 }
 
-    /*body {
+body {
     width: 500px;
     margin: 50px auto;
     background-color: white;
     padding: 0 20px 20px 20px;
     border: 2px solid black;
-    } */
+}
 
 h1 {
     font-size: 30px;
